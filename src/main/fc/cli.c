@@ -122,6 +122,12 @@ extern uint8_t __config_end;
 #define PLAY_SOUND
 #endif
 
+/* DGF+ */
+#ifdef TEST
+#include "NoController_ert_rtw/NoController.h"
+#endif
+/* DGF- */
+
 extern timeDelta_t cycleTime; // FIXME dependency on mw.c
 extern uint8_t detectedSensors[SENSOR_INDEX_COUNT];
 
@@ -141,6 +147,12 @@ static void cliAssert(char *cmdline);
 static bool commandBatchActive = false;
 static bool commandBatchError = false;
 #endif
+
+/* DGF+ */
+#ifdef TEST
+void rt_OneStep(void);
+#endif
+/* DGF- */
 
 // sync this with features_e
 static const char * const featureNames[] = {
@@ -3604,3 +3616,54 @@ void cliInit(const serialConfig_t *serialConfig)
 {
     UNUSED(serialConfig);
 }
+
+/* DGF+ */
+#ifdef TEST
+void NOINLINE taskTest(timeUs_t currentTimeUs) {
+    UNUSED(currentTimeUs);
+    if (cliMode) {
+        NoController_U.Vreel = 0;
+        NoController_U.Elevator_Angle = 20;
+        NoController_U.Throttle = 0;
+        
+        rt_OneStep();
+        cliPrintf("Input Vreel is: %f\n", NoController_U.Vreel);
+        cliPrintf("Input Elevator Angle is: %f\n", NoController_U.Elevator_Angle);
+        cliPrintf("Input Throttle is: %f\n", NoController_U.Throttle);
+        cliPrintf("Output Altitude is: %f\n", NoController_Y.Altitude);
+        cliPrintf("Output Theta is: %f\n",  NoController_Y.Theta);
+        cliPrintf("Ouput Alpha is: %f\n", NoController_Y.Alpha);
+    }
+}
+void rt_OneStep(void)
+{
+  static boolean_T OverrunFlag = false;
+
+  /* Disable interrupts here */
+
+  /* Check for overrun */
+  if (OverrunFlag) {
+    rtmSetErrorStatus(NoController_M, "Overrun");
+    return;
+  }
+
+  OverrunFlag = true;
+
+  /* Save FPU context here (if necessary) */
+  /* Re-enable timer or interrupt here */
+  /* Set model inputs here */
+
+  /* Step the model for base rate */
+  NoController_step();
+
+  /* Get model outputs here */
+
+  /* Indicate task complete */
+  OverrunFlag = false;
+
+  /* Disable interrupts here */
+  /* Restore FPU context here (if necessary) */
+  /* Enable interrupts here */
+}
+#endif
+/* DGF- */

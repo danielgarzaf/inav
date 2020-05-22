@@ -151,6 +151,13 @@
 extern void initialisePreBootHardware(void);
 #endif
 
+/* DGF+ */
+#ifdef TEST
+#include "NoController_ert_rtw/rtwtypes.h"
+#include "NoController_ert_rtw/NoController.h"
+#endif
+/* DGF- */
+
 extern uint8_t motorControlEnable;
 
 typedef enum {
@@ -689,6 +696,11 @@ void init(void)
         setTaskEnabled(TASK_RPM_FILTER, true);
     }
 #endif
+/* DGF+ */
+#ifdef TEST
+    NoController_initialize();
+#endif
+/* DGF- */  
 
     systemState |= SYSTEM_STATE_READY;
 }
