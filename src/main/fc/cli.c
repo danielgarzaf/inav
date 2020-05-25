@@ -3619,19 +3619,23 @@ void cliInit(const serialConfig_t *serialConfig)
 
 /* DGF+ */
 #ifdef TEST_NOCONTROLLER
+volatile bool printCliFlag = false;
 void NOINLINE taskTestNoController(timeUs_t currentTimeUs) {
     UNUSED(currentTimeUs);
     if (cliMode) {
-        NoController_U.Vreel = 0;
-        NoController_U.Elevator_Angle = 20;
-        NoController_U.Throttle = 0;
-        rt_OneStep();
-        cliPrintf("Input Vreel is: %f\n", NoController_U.Vreel);
-        cliPrintf("Input Elevator Angle is: %f\n", NoController_U.Elevator_Angle);
-        cliPrintf("Input Throttle is: %f\n", NoController_U.Throttle);
-        cliPrintf("Output Altitude is: %f\n", NoController_Y.Altitude);
-        cliPrintf("Output Theta is: %f\n",  NoController_Y.Theta);
-        cliPrintf("Ouput Alpha is: %f\n", NoController_Y.Alpha);
+        static long int i = 0;
+        if (!printCliFlag) {
+            cliPrintf("Altitude, Theta, Alpha\n");
+            printCliFlag = true;
+        }
+        if (i <= (10 * 1000)) {  // i <= matlabSimulationRunTime / samplingRate
+            NoController_U.Vreel = 0;
+            NoController_U.Elevator_Angle = 20;
+            NoController_U.Throttle = 0;
+            rt_OneStep();
+            cliPrintf("%f, %f, %f\n", NoController_Y.Altitude, NoController_Y.Theta, NoController_Y.Alpha);
+        }
+        i++;
     }
 }
 void rt_OneStep(void)
