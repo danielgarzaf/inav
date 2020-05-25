@@ -123,7 +123,7 @@ extern uint8_t __config_end;
 #endif
 
 /* DGF+ */
-#ifdef TEST
+#ifdef TEST_NOCONTROLLER
 #include "NoController_ert_rtw/NoController.h"
 #endif
 /* DGF- */
@@ -149,7 +149,7 @@ static bool commandBatchError = false;
 #endif
 
 /* DGF+ */
-#ifdef TEST
+#ifdef TEST_NOCONTROLLER
 void rt_OneStep(void);
 #endif
 /* DGF- */
@@ -3618,14 +3618,13 @@ void cliInit(const serialConfig_t *serialConfig)
 }
 
 /* DGF+ */
-#ifdef TEST
-void NOINLINE taskTest(timeUs_t currentTimeUs) {
+#ifdef TEST_NOCONTROLLER
+void NOINLINE taskTestNoController(timeUs_t currentTimeUs) {
     UNUSED(currentTimeUs);
     if (cliMode) {
         NoController_U.Vreel = 0;
         NoController_U.Elevator_Angle = 20;
         NoController_U.Throttle = 0;
-        
         rt_OneStep();
         cliPrintf("Input Vreel is: %f\n", NoController_U.Vreel);
         cliPrintf("Input Elevator Angle is: %f\n", NoController_U.Elevator_Angle);

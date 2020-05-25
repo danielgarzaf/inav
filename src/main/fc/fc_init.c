@@ -152,7 +152,7 @@ extern void initialisePreBootHardware(void);
 #endif
 
 /* DGF+ */
-#ifdef TEST
+#ifdef TEST_NOCONTROLLER
 #include "NoController_ert_rtw/rtwtypes.h"
 #include "NoController_ert_rtw/NoController.h"
 #endif
@@ -697,7 +697,7 @@ void init(void)
     }
 #endif
 /* DGF+ */
-#ifdef TEST
+#ifdef TEST_NOCONTROLLER
     NoController_initialize();
 #endif
 /* DGF- */  

@@ -210,5 +210,5 @@
 #define USE_SERIALSHOT
 
 /* DGF+ */
-#define TEST
+#define TEST_NOCONTROLLER
 /* DGF- */

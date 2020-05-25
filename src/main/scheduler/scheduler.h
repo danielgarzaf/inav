@@ -121,8 +121,8 @@ typedef enum {
 #endif
 
 /* DGF+ */
-#ifdef TEST
-    TASK_TEST,
+#ifdef TEST_NOCONTROLLER
+    TASK_TEST_NOCONTROLLER,
 #endif
 /* DGF- */
 

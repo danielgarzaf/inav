@@ -24,3 +24,6 @@ void cliInit(const struct serialConfig_s *serialConfig);
 void cliProcess(void);
 struct serialPort_s;
 void cliEnter(struct serialPort_s *serialPort);
+/* DGF+ */
+void taskTestNoController(timeUs_t currentTimeUs);
+/* DGF- */

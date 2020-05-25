@@ -348,8 +348,8 @@ void fcTasksInit(void)
     setTaskEnabled(TASK_GLOBAL_FUNCTIONS, true);
 #endif
 /* DGF+ */
-#ifdef TEST
-    setTaskEnabled(TASK_TEST, true);
+#ifdef TEST_NOCONTROLLER
+    setTaskEnabled(TASK_TEST_NOCONTROLLER, true);
 #endif  
 /* DGF- */
 }
@@ -584,10 +584,10 @@ cfTask_t cfTasks[TASK_COUNT] = {
 #endif
 
 /* DGF+ */
-#ifdef USE_SERIAL_TEST_MESSAGE
-    [TASK_TEST] = {
-        .taskName = "Test",
-        .taskFunc = taskTest,
+#ifdef TEST_NOCONTROLLER
+    [TASK_TEST_NOCONTROLLER] = {
+        .taskName = "TestNoController",
+        .taskFunc = taskTestNoController,
         .desiredPeriod = TASK_PERIOD_HZ(1),   // 1 Hz
         .staticPriority = TASK_PRIORITY_LOW,
     },
