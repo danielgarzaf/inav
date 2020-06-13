@@ -210,5 +210,7 @@
 #define USE_SERIALSHOT
 
 /* DGF+ */
-#define TEST_NOCONTROLLER
+//#define TEST_NOCONTROLLER
+//#define TEST_AUTOPILOTMODEL
+#define TEST_EXAMPLE
 /* DGF- */

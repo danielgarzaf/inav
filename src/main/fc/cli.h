@@ -25,5 +25,15 @@ void cliProcess(void);
 struct serialPort_s;
 void cliEnter(struct serialPort_s *serialPort);
 /* DGF+ */
+#ifdef TEST_NOCONTROLLER
 void taskTestNoController(timeUs_t currentTimeUs);
+#endif
+
+#ifdef TEST_AUTOPILOTMODEL
+void taskTestAutopilotModel(timeUs_t currentTimeUs);
+#endif
+
+#ifdef TEST_EXAMPLE
+void taskTestExample(timeUs_t currentTimeUs);
+#endif
 /* DGF- */

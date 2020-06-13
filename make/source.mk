@@ -75,6 +75,8 @@ COMMON_SRC = \
             NoController_ert_rtw/rtGetNaN.c \
             NoController_ert_rtw/rt_nonfinite.c \
             NoController_ert_rtw/NoController_data.c \
+            AutopilotModel_ert_rtw/AutopilotModel.c \
+            Example/ScaleandOffset.c \
             fc/cli.c \
             fc/config.c \
             fc/controlrate_profile.c \

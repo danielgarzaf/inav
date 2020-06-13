@@ -156,6 +156,16 @@ extern void initialisePreBootHardware(void);
 #include "NoController_ert_rtw/rtwtypes.h"
 #include "NoController_ert_rtw/NoController.h"
 #endif
+
+#ifdef TEST_AUTOPILOTMODEL
+#include "AutopilotModel_ert_rtw/AutopilotModel.h"
+#include "AutopilotModel_ert_rtw/rtwtypes.h"
+#endif
+
+#ifdef TEST_EXAMPLE
+#include "Example/ScaleandOffset.h"
+#include "Example/rtwtypes.h"
+#endif
 /* DGF- */
 
 extern uint8_t motorControlEnable;
@@ -699,6 +709,14 @@ void init(void)
 /* DGF+ */
 #ifdef TEST_NOCONTROLLER
     NoController_initialize();
+#endif
+
+#ifdef TEST_AUTOPILOTMODEL
+    AutopilotModel_initialize();
+#endif
+
+#ifdef TEST_EXAMPLE
+    ScaleandOffset_initialize();
 #endif
 /* DGF- */  
 

@@ -350,7 +350,15 @@ void fcTasksInit(void)
 /* DGF+ */
 #ifdef TEST_NOCONTROLLER
     setTaskEnabled(TASK_TEST_NOCONTROLLER, true);
-#endif  
+#endif
+
+#ifdef TEST_AUTOPILOTMODEL
+    setTaskEnabled(TASK_TEST_AUTOPILOTMODEL, true);
+#endif
+
+#ifdef TEST_EXAMPLE
+    setTaskEnabled(TASK_TEST_EXAMPLE, true);
+#endif
 /* DGF- */
 }
 
@@ -588,7 +596,25 @@ cfTask_t cfTasks[TASK_COUNT] = {
     [TASK_TEST_NOCONTROLLER] = {
         .taskName = "TestNoController",
         .taskFunc = taskTestNoController,
-        .desiredPeriod = TASK_PERIOD_HZ(50),   // 50 Hz
+        .desiredPeriod = TASK_PERIOD_HZ(100),
+        .staticPriority = TASK_PRIORITY_LOW,
+    },
+#endif
+
+#ifdef TEST_AUTOPILOTMODEL
+    [TASK_TEST_AUTOPILOTMODEL] = {
+        .taskName = "TestAutopilotModel",
+        .taskFunc = taskTestAutopilotModel,
+        .desiredPeriod = TASK_PERIOD_HZ(100),
+        .staticPriority = TASK_PRIORITY_LOW,
+    },
+#endif
+
+#ifdef TEST_EXAMPLE
+    [TASK_TEST_EXAMPLE] = {
+        .taskName = "TestExample",
+        .taskFunc = taskTestExample,
+        .desiredPeriod = TASK_PERIOD_HZ(1),
         .staticPriority = TASK_PRIORITY_LOW,
     },
 #endif

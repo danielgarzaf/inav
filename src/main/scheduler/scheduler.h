@@ -124,6 +124,12 @@ typedef enum {
 #ifdef TEST_NOCONTROLLER
     TASK_TEST_NOCONTROLLER,
 #endif
+#ifdef TEST_AUTOPILOTMODEL
+    TASK_TEST_AUTOPILOTMODEL,
+#endif
+#ifdef TEST_EXAMPLE
+    TASK_TEST_EXAMPLE,
+#endif
 /* DGF- */
 
     /* Count of real tasks */

@@ -126,6 +126,12 @@ extern uint8_t __config_end;
 #ifdef TEST_NOCONTROLLER
 #include "NoController_ert_rtw/NoController.h"
 #endif
+#ifdef TEST_AUTOPILOTMODEL
+#include "AutopilotModel_ert_rtw/AutopilotModel.h"
+#endif
+#ifdef TEST_EXAMPLE
+#include "Example/ScaleandOffset.h"
+#endif
 /* DGF- */
 
 extern timeDelta_t cycleTime; // FIXME dependency on mw.c
@@ -150,6 +156,18 @@ static bool commandBatchError = false;
 
 /* DGF+ */
 #ifdef TEST_NOCONTROLLER
+void rt_OneStep(void);
+#endif
+
+#ifdef CONTROL_PROYECTO_FINAL
+void rt_OneStep(void);
+#endif
+
+#ifdef TEST_EXAMPLE
+void rt_OneStep(void);
+#endif
+
+#ifdef TEST_AUTPILOTMODEL
 void rt_OneStep(void);
 #endif
 /* DGF- */
@@ -3619,23 +3637,19 @@ void cliInit(const serialConfig_t *serialConfig)
 
 /* DGF+ */
 #ifdef TEST_NOCONTROLLER
-volatile bool printCliFlag = false;
+unsigned int i = 0;
 void NOINLINE taskTestNoController(timeUs_t currentTimeUs) {
     UNUSED(currentTimeUs);
     if (cliMode) {
-        static long int i = 0;
-        if (!printCliFlag) {
-            cliPrintf("Altitude, Theta, Alpha\n");
-            printCliFlag = true;
-        }
-        if (i <= (10 * 1000)) {  // i <= matlabSimulationRunTime / samplingRate
+        if (i <= (20 * 1000)) {  // i <= matlabSimulationRunTime / samplingRate
             NoController_U.Vreel = 0;
-            NoController_U.Elevator_Angle = 20;
+            NoController_U.Elevator_Angle = -20;
             NoController_U.Throttle = 0;
             rt_OneStep();
-            cliPrintf("%f, %f, %f\n", NoController_Y.Altitude, NoController_Y.Theta, NoController_Y.Alpha);
+            cliPrintf("%d,%f,%f,%f\n", i, NoController_Y.Altitude, NoController_Y.Theta, NoController_Y.Alpha);
+            i++;
         }
-        i++;
+        
     }
 }
 void rt_OneStep(void)
@@ -3658,6 +3672,161 @@ void rt_OneStep(void)
 
   /* Step the model for base rate */
   NoController_step();
+
+  /* Get model outputs here */
+
+  /* Indicate task complete */
+  OverrunFlag = false;
+
+  /* Disable interrupts here */
+  /* Restore FPU context here (if necessary) */
+  /* Enable interrupts here */
+}
+#endif
+
+#ifdef CONTROL_PROYECTO_FINAL
+volatile bool cliFlag = false;
+unsigned int i = 0;
+void NOINLINE taskControlFinal(timeUs_t currentTimeUs) {
+    UNUSED(currentTimeUs);
+    if (cliMode) {
+        
+        if (!cliFlag) {
+            cliPrintf("ms, pitchAngleContinuous\n");
+            cliFlag = true;
+        }
+        if (i <= (10 * 1000)) {  // i <= matlabSimulationRunTime / samplingRate
+            proyectoFinalControl_U.elevatorAngle = 20;
+            rt_OneStep();
+            cliPrintf("%d, %f\n", i, proyectoFinalControl_Y.pitchAngleContinuous);
+        }
+        i++;
+    }
+}
+void rt_OneStep(void)
+{
+  static boolean_T OverrunFlag = false;
+
+  /* Disable interrupts here */
+
+  /* Check for overrun */
+  if (OverrunFlag) {
+    rtmSetErrorStatus(proyectoFinalControl_M, "Overrun");
+    return;
+  }
+
+  OverrunFlag = true;
+
+  /* Save FPU context here (if necessary) */
+  /* Re-enable timer or interrupt here */
+  /* Set model inputs here */
+
+  /* Step the model for base rate */
+  proyectoFinalControl_step();
+
+  /* Get model outputs here */
+
+  /* Indicate task complete */
+  OverrunFlag = false;
+
+  /* Disable interrupts here */
+  /* Restore FPU context here (if necessary) */
+  /* Enable interrupts here */
+}
+
+/*
+ * The example "main" function illustrates what is required by your
+ * application code to initialize, execute, and terminate the generated code.
+ * Attaching rt_OneStep to a real-time clock is target specific.  This example
+ * illustrates how you do this relative to initializing the model.
+ */
+#endif
+
+#ifdef TEST_AUTOPILOTMODEL
+unsigned int i = 0;
+void NOINLINE taskTestAutopilotModel(timeUs_t currentTimeUs) {
+    UNUSED(currentTimeUs);
+    if (cliMode) {
+        if (i <= (5 * 1000)) {  // seconds / sampling rate (20 / (1/1000)) 
+            AutopilotModel_U.altCmd = (double)400;
+            AutopilotModel_U.theta = (double)-20;
+            rt_OneStep();
+            cliPrintf("%d,%f,%f\n", i, AutopilotModel_Y.elevCmd, AutopilotModel_Y.altError);
+            i++;
+        }
+    }
+}
+void rt_OneStep(void)
+{
+  static boolean_T OverrunFlag = false;
+
+  /* Disable interrupts here */
+
+  /* Check for overrun */
+  if (OverrunFlag) {
+    rtmSetErrorStatus(AutopilotModel_M, "Overrun");
+    return;
+  }
+
+  OverrunFlag = true;
+
+  /* Save FPU context here (if necessary) */
+  /* Re-enable timer or interrupt here */
+  /* Set model inputs here */
+
+  /* Step the model for base rate */
+  AutopilotModel_step();
+
+  /* Get model outputs here */
+
+  /* Indicate task complete */
+  OverrunFlag = false;
+
+  /* Disable interrupts here */
+  /* Restore FPU context here (if necessary) */
+  /* Enable interrupts here */
+}
+#endif
+
+#ifdef TEST_EXAMPLE
+unsigned int i = 0;
+void NOINLINE taskTestExample(timeUs_t currentTimeUs) {
+    UNUSED(currentTimeUs);
+    if (cliMode) {
+        if (i <= (1 * 1000)) {  // seconds / sampling rate (20 / (1/1000)) 
+            ScaleandOffset_U.coolantTemp = 40;
+            ScaleandOffset_U.Offset = 20;
+            ScaleandOffset_U.Scaling = 2;
+            cliPrintf("The temperature is: %d\n", ScaleandOffset_Y.Temperature);
+            if (ScaleandOffset_Y.Error)
+                cliPrintf("Error: Out of range\n");
+            else
+                cliPrintf("No Error: In range\n");
+            rt_OneStep();
+            i++;
+        }
+    }
+}
+void rt_OneStep(void)
+{
+  static boolean_T OverrunFlag = false;
+
+  /* Disable interrupts here */
+
+  /* Check for overrun */
+  if (OverrunFlag) {
+    rtmSetErrorStatus(ScaleandOffset_M, "Overrun");
+    return;
+  }
+
+  OverrunFlag = true;
+
+  /* Save FPU context here (if necessary) */
+  /* Re-enable timer or interrupt here */
+  /* Set model inputs here */
+
+  /* Step the model */
+  ScaleandOffset_step();
 
   /* Get model outputs here */
 
